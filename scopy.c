@@ -555,9 +555,9 @@ FILE *init_output(const char *ofn, unsigned long nsamples, unsigned short dim, l
       _flag = 0;
 
 #ifdef WORDS_BIGENDIAN
-    swap_bytes(&_dim, 1, SIZEOF_SHORT);
-    swap_bytes(&_flag, 1, SIZEOF_LONG);
-    swap_bytes(&_rate, 1, sizeof(float));
+    swap_bytes(&_dim, 1, 2);
+    swap_bytes(&_flag, 1, 4);
+    swap_bytes(&_rate, 1, 4);
 #endif
   
     if (vh)
@@ -567,7 +567,7 @@ FILE *init_output(const char *ofn, unsigned long nsamples, unsigned short dim, l
 	return(NULL);
       }
 
-    if (fwrite(&_dim, SIZEOF_SHORT, 1, f) != 1 || fwrite(&_flag, SIZEOF_LONG, 1, f) != 1 || fwrite(&_rate, sizeof(float), 1, f) != 1) {
+    if (fwrite(&_dim, 2, 1, f) != 1 || fwrite(&_flag, 4, 1, f) != 1 || fwrite(&_rate, 4, 1, f) != 1) {
       if (f != stdout) fclose(f);
       fprintf(stderr, "scopy error -- cannot write header to file %s\n", ofn); 
       return(NULL);
