@@ -373,15 +373,15 @@ spfstream_t *spf_input_stream_open(const char *fn, long flag, size_t nbytes)
     return(NULL);
   }
   
-  if (fread(&(s->idim), SIZEOF_SHORT, 1, s->f) != 1 || fread(&(s->iflag), SIZEOF_LONG, 1, s->f) != 1 || fread(&(s->Fs), sizeof(float), 1, s->f) != 1) {
+  if (fread(&(s->idim), 2, 1, s->f) != 1 || fread(&(s->iflag), 4, 1, s->f) != 1 || fread(&(s->Fs), 4, 1, s->f) != 1) {
     fprintf(stderr, "spf_header_read(): cannot read fixed header\n");
     spf_stream_close(s);
     return(NULL);
   }
 #ifdef WORDS_BIGENDIAN
-  sp_swap(&(s->idim), SIZEOF_SHORT);
-  sp_swap(&(s->iflag), SIZEOF_LONG);
-  sp_swap(&(s->Fs), sizeof(float));
+  sp_swap(&(s->idim), 2);
+  sp_swap(&(s->iflag), 4);
+  sp_swap(&(s->Fs), 4);
 #endif
 
   /* initialize output dimension */
@@ -504,14 +504,14 @@ spfstream_t *spf_output_stream_open(const char *fn, unsigned short idim, long if
   rate = s->Fs;
   
 #ifdef WORDS_BIGENDIAN
-  sp_swap(&dim, SIZEOF_SHORT);
-  sp_swap(&flag, SIZEOF_LONG);
-  sp_swap(&rate, sizeof(float));
+  sp_swap(&dim, 2);
+  sp_swap(&flag, 4);
+  sp_swap(&rate, 4);
 #endif
   
-  if (fwrite(&dim, SIZEOF_SHORT, 1, s->f) != 1 || 
-      fwrite(&flag, SIZEOF_LONG, 1, s->f) != 1 || 
-      fwrite(&rate, sizeof(float), 1, s->f) != 1) {
+  if (fwrite(&dim, 2, 1, s->f) != 1 || 
+      fwrite(&flag, 4, 1, s->f) != 1 || 
+      fwrite(&rate, 4, 1, s->f) != 1) {
     fprintf(stderr, "spf_output_stream_open() -- cannot write fixed header to %s\n", (fn) ? (fn) : "stdout"); 
     return(NULL);
   }
